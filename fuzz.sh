@@ -6,8 +6,8 @@ export TERM=xterm-color
 echo "Starting MRuby fuzzing with $(nproc) cores/fuzzers"
 
 SLAVE_COUNT=$(expr $(nproc) - 1)
-TESTCASE_DIR=/testcases
-AFL_OUT_DIR=/results
+export TESTCASE_DIR=/testcases
+export AFL_OUT_DIR=/results
 
 # Start master and slaves in background and hide any output.
 echo "Starting master-fuzzer"
