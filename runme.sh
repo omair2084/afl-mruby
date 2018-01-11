@@ -1,9 +1,12 @@
 #!/bin/bash
 
+
 if [ `whoami` != root ]; then
     echo "The script requires sudo/root!"
     exit
 fi
+
+CUR_DIR=$(pwd)
 
 read -p "Enable AddressSanitizer (y/n)? " USE_ASAN
 case "$USE_ASAN" in
@@ -50,12 +53,13 @@ wget $AFL_URL --no-verbose \
     && rm -rf /tmp/afl-latest.tgz /tmp/afl-src
 
 # Get latest MRuby from Github trunk.
+cd $CUR_DIR
 git clone $MRUBY_URL
 
 # Add AFL-related build config and replace mruby-bin code with persistent fuzzer stub.
 mv build_config.rb mruby/build_config.rb
 mv stub.c mruby/mrbgems/mruby-bin-mruby/tools/mruby/mruby.c
-AFL_HARDEN=1 ASAN_OPTIONS=detect_leaks=0 mruby/mrbgems/mruby-bin-mruby/tools/mruby/minirake
+AFL_HARDEN=1 ASAN_OPTIONS=detect_leaks=0 mruby/minirake
 
 mkdir testcases
 
