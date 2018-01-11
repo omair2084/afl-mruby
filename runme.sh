@@ -19,5 +19,46 @@ case "$USE_AFL" in
   * ) echo "Invalid choice, write \"afl\" if you want to fuzz or write \"gcc\" if you only want to compile mruby.";exit;;
 esac
 
+export AFL_URL=http://lcamtuf.coredump.cx/afl/releases/afl-latest.tgz
+export MRUBY_URL=https://github.com/mruby/mruby.git
+
+# Get required build dependencies.
+apt-get update && apt-get -y install \
+        wget \
+        git \
+        ca-certificates \
+        build-essential \
+        ruby \
+        libc6-dev \
+        bison \
+        libssl-dev \
+        libhiredis-dev \
+        llvm clang \
+        nano gdb strace golang python-pip \
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists
+
+# Get latest version AFL-Fuzzer and install with llvm_mode.
+WORKDIR /tmp
+RUN wget $AFL_URL --no-verbose \
+    && mkdir afl-src \
+    && tar -xzf afl-latest.tgz -C afl-src --strip-components=1 \
+    && cd afl-src \
+    && make \
+    && cd llvm_mode && make && cd .. \
+    && make install \
+    && rm -rf /tmp/afl-latest.tgz /tmp/afl-src
+
+# Get latest MRuby from Github trunk.
+WORKDIR /
+RUN git clone $MRUBY_URL
+WORKDIR /mruby
+
+# Add AFL-related build config and replace mruby-bin code with persistent fuzzer stub.
+mv build_config.rb build_config.rb
+mv stub.c mrbgems/mruby-bin-mruby/tools/mruby/stub.c
+cd mrbgems/mruby-bin-mruby/tools/mruby/ && rm -rf mruby.c && mv stub.c mruby.c
+AFL_HARDEN=1 ASAN_OPTIONS=detect_leaks=0 ./minirake
+
 
 
