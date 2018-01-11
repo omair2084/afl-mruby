@@ -1,4 +1,5 @@
 # MRuby fuzzer environment
 
 * Clone repo and run sudo ./runme.sh
-* ./fuzzme.sh
+* Put harness in testcases folder
+* Run ./fuzz.sh
