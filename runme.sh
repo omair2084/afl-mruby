@@ -39,8 +39,8 @@ apt-get update && apt-get -y install \
     && rm -rf /var/lib/apt/lists
 
 # Get latest version AFL-Fuzzer and install with llvm_mode.
-WORKDIR /tmp
-RUN wget $AFL_URL --no-verbose \
+cd /tmp
+wget $AFL_URL --no-verbose \
     && mkdir afl-src \
     && tar -xzf afl-latest.tgz -C afl-src --strip-components=1 \
     && cd afl-src \
@@ -50,9 +50,9 @@ RUN wget $AFL_URL --no-verbose \
     && rm -rf /tmp/afl-latest.tgz /tmp/afl-src
 
 # Get latest MRuby from Github trunk.
-WORKDIR /
-RUN git clone $MRUBY_URL
-WORKDIR /mruby
+cd /
+git clone $MRUBY_URL
+cd /mruby
 
 # Add AFL-related build config and replace mruby-bin code with persistent fuzzer stub.
 mv build_config.rb build_config.rb
