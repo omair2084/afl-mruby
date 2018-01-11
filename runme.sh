@@ -50,15 +50,14 @@ wget $AFL_URL --no-verbose \
     && rm -rf /tmp/afl-latest.tgz /tmp/afl-src
 
 # Get latest MRuby from Github trunk.
-cd /
 git clone $MRUBY_URL
-cd /mruby
 
 # Add AFL-related build config and replace mruby-bin code with persistent fuzzer stub.
-mv build_config.rb build_config.rb
-mv stub.c mrbgems/mruby-bin-mruby/tools/mruby/stub.c
-cd mrbgems/mruby-bin-mruby/tools/mruby/ && rm -rf mruby.c && mv stub.c mruby.c
-AFL_HARDEN=1 ASAN_OPTIONS=detect_leaks=0 ./minirake
+mv build_config.rb mruby/build_config.rb
+mv stub.c mruby/mrbgems/mruby-bin-mruby/tools/mruby/mruby.c
+AFL_HARDEN=1 ASAN_OPTIONS=detect_leaks=0 mruby/mrbgems/mruby-bin-mruby/tools/mruby/minirake
 
-
+#Create folders
+mkdir testcases
+mkdir results
 
