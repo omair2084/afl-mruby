@@ -61,3 +61,4 @@ AFL_HARDEN=1 ASAN_OPTIONS=detect_leaks=0 mruby/mrbgems/mruby-bin-mruby/tools/mru
 mkdir testcases
 mkdir results
 
+echo core>/proc/sys/kernel/core_pattern
